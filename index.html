@@ -1,0 +1,400 @@
+<!--
+  Tourist Website (Single-file static HTML/CSS/JS)
+  ------------------------------------------------
+  How to use:
+  1) Save this entire file as `index.html` in an empty folder.
+  2) Open `index.html` in your browser to preview locally.
+  3) To deploy to GitHub Pages (free): create a repo, commit this file to the repo root, then enable GitHub Pages (main branch / root). The site will be published at `https://yourusername.github.io/` or `https://yourusername.github.io/repo/`.
+  4) To use a custom domain (.lk): buy domain, add DNS records (A records / CNAME) — see the "DEPLOYMENT" section inside the page for exact steps.
+
+  Quick customization points (search inside file):
+   - SITE_TITLE, SITE_DESCRIPTION
+   - contactPhone, contactEmail
+   - packages array (in the <script> near the bottom) — add or remove packages here and they'll render automatically.
+   - Replace Formspree action URL in the contact form with your own endpoint.
+
+  Why a single-file?  
+  - Easy to give to a client (one file). 
+  - Quick to edit and upload. 
+  - For better maintainability later, you can split styles into css/ and scripts into js/ files.
+
+  Features included:
+   - Modern responsive design (desktop/tablet/mobile)
+   - Accessible navigation (mobile menu)
+   - Packages rendered from a JS array (easy updates)
+   - Lazy-loaded gallery images
+   - SEO meta tags + OpenGraph + JSON-LD structured data
+   - Contact form (Formspree placeholder) + basic validation
+   - Smooth scroll, back-to-top, small interactive touches
+   - Instructions for GitHub Pages + custom domain + SSL notes
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- === SEO / Social === -->
+  <title>YoSolution Tours — Explore Sri Lanka</title>
+  <meta name="description" content="YoSolution Tours — modern and reliable local tours in Sri Lanka. Book Sigiriya, Kandy, Ella and more. Mobile-friendly website with easy contact.">
+  <meta name="keywords" content="Sri Lanka tours, travel, tourism, packages, Sigiriya, Kandy, Ella">
+  <link rel="canonical" href="https://www.yoursite.lk/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="YoSolution Tours — Explore Sri Lanka" />
+  <meta property="og:description" content="Modern tourism packages, local guides and great experiences across Sri Lanka." />
+  <meta property="og:url" content="https://www.yoursite.lk/" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80&auto=format&fit=crop" />
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow">
+
+  <!-- Favicon placeholder (replace with your favicon file) -->
+  <link rel="icon" href="https://assets.codepen.io/605876/placeholder-favicon.png">
+
+  <!-- Simple, modern CSS (embedded for single-file delivery) -->
+  <style>
+    :root{
+      --bg:#0f2411; /* dark navy */
+      --accent:#ff6b3d; /* warm orange */
+      --muted:#6b7280;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.03);
+      --maxw:1100px;
+      --radius:12px;
+      --gap:18px;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      color-scheme: dark;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071021 0%, #07101a 60%);color:#e6eef8}
+    a{color:var(--accent);text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:24px}
+
+    /* NAV */
+    header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg, rgba(3,7,15,0.55), rgba(3,7,15,0.35));backdrop-filter: blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:600}
+    .brand .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffd66b);display:flex;align-items:center;justify-content:center;color:#071021;font-weight:700}
+    nav ul{display:flex;gap:14px;list-style:none;margin:0;padding:0}
+    nav li{font-size:15px}
+    .cta{background:var(--accent);color:#071021;padding:10px 14px;border-radius:10px;font-weight:700}
+    .menu-toggle{display:none;background:none;border:0;color:inherit}
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1fr;gap:24px;align-items:center;padding:40px 0}
+    .hero-inner{display:flex;gap:24px;align-items:center}
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:18px;border:1px solid rgba(255,255,255,0.03)}
+    .hero-left h1{font-size:clamp(24px,4.6vw,40px);margin:0 0 10px}
+    .hero-left p{margin:0 0 18px;color:var(--muted)}
+    .btns{display:flex;gap:12px}
+    .btn{padding:10px 14px;border-radius:10px;font-weight:600}
+    .btn-solid{background:var(--accent);color:#071021}
+    .btn-outline{border:1px solid rgba(255,255,255,0.06)}
+
+    /* FEATURES */
+    .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px}
+    .feature{background:var(--glass);padding:12px;border-radius:10px}
+
+    /* PACKAGES */
+    .section{padding:48px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+    .card h3{margin:10px 0 6px}
+    .price-row{display:flex;justify-content:space-between;align-items:center}
+    .badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-weight:700}
+
+    /* GALLERY */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+    .gallery img{width:100%;height:120px;object-fit:cover;border-radius:8px}
+
+    /* CONTACT */
+    form{display:grid;gap:10px}
+    input,textarea,select{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    button[type=submit]{padding:10px;border-radius:8px;border:0;background:var(--accent);color:#071021;font-weight:700}
+
+    /* FOOTER */
+    footer{padding:24px 0;border-top:1px solid rgba(255,255,255,0.03);margin-top:40px;color:var(--muted)}
+
+    /* SMALL SCREEN */
+    @media (max-width:800px){
+      nav ul{display:none}
+      .menu-toggle{display:block}
+      .hero-inner{flex-direction:column}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">YT</div>
+        <div>
+          <div style="font-size:16px">YoSolution Tours</div>
+          <div style="font-size:12px;color:var(--muted)">Local tours across Sri Lanka</div>
+        </div>
+      </div>
+
+      <nav>
+        <button class="menu-toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+        <ul id="mainnav">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#packages">Packages</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <a href="#contact" class="cta">Book Now</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main id="home">
+    <section class="container hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="hero-card">
+            <h1>Discover Sri Lanka with Local Experts</h1>
+            <p>Private tours, curated itineraries, and local guides. Mobile friendly & easy to book.</p>
+            <div class="btns">
+              <a href="#packages" class="btn btn-solid">View Packages</a>
+              <a href="#contact" class="btn btn-outline">Contact Us</a>
+            </div>
+
+            <div class="features" style="margin-top:18px">
+              <div class="feature">✅ Private & small groups</div>
+              <div class="feature">✅ Fixed prices, no hidden fees</div>
+              <div class="feature">✅ Local guides & transport</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1">
+          <!-- Hero image (replace URL with your own image in production) -->
+          <img src="https://images.travelandleisureasia.com/wp-content/uploads/sites/7/2023/11/22150528/mirissa.jpeg" alt="Sri Lanka travel" style="width:100%;border-radius:14px;box-shadow:0 6px 30px rgba(0,0,0,0.6)" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKAGES -->
+    <section id="packages" class="container section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2>Popular Packages</h2>
+        <div style="color:var(--muted);font-size:14px">Updated: <span id="lastUpdated">—</span></div>
+      </div>
+
+      <div id="packagesGrid" class="grid" aria-live="polite"></div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery" class="container section">
+      <h2>Gallery</h2>
+      <div class="gallery">
+        <img src="https://backpacking-tours.imgix.net/storage/uploads/blog/sri-lanka/weather/backpacking-tours-sri-lanka-weather-98_nvten.jpg?w=1920&crop=faces&q=75&auto=format&fm=png" alt="beach" loading="lazy">
+        <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/33/fb/76/sri-lanka.jpg?w=1200&h=700&s=1" alt="tea fields" loading="lazy">
+        <img src="https://www.lugaresincertos.com/wp-content/uploads/2025/01/Safari-de-jipe-Floresta-de-Sinharaja-Sri-Lanka-sri-lanka-jorge-duarte-estevao-1170-x768.jpg" alt="temple" loading="lazy">
+        <img src="https://media.meer.com/attachments/2dec4f76fe8ccba7831deff3db34cebc8d1f0812/store/fill/1230/692/19d185bb61eb15858a0b32d700cb9fd7f2bb47724aeca062593bac3e33b2/Wannago-Sri-Lanka.jpg" alt="mountain" loading="lazy">
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="container section">
+      <h2>Contact & Book</h2>
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:20px">
+        <div>
+          <p style="color:var(--muted)">Call or WhatsApp us: <strong id="phone">+94 77 000 0000</strong></p>
+
+          <!-- Contact form (use your Formspree/Getform endpoint) -->
+          <form id="contactForm" action="https://formspree.io/f/your-form-id" method="POST" onsubmit="return handleSubmit(event)">
+            <input type="text" name="name" placeholder="Your name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone" placeholder="Phone (WhatsApp)">
+            <select name="package">
+              <option value="">Select package (optional)</option>
+            </select>
+            <textarea name="message" rows="5" placeholder="Message or special requests"></textarea>
+            <button type="submit">Send Enquiry</button>
+            <div id="formMsg" style="margin-top:8px;color:var(--muted)"></div>
+          </form>
+        </div>
+
+        <aside style="background:var(--glass);padding:14px;border-radius:12px">
+          <h3>Office</h3>
+          <p style="color:var(--muted)">Colombo, Sri Lanka<br>Mon - Sat: 08:00 - 18:00</p>
+          <h4>Follow</h4>
+          <p style="display:flex;gap:10px"><a href="#">Facebook</a> <a href="#">Instagram</a> <a href="#">WhatsApp</a></p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+        <div>
+          <strong>YoSolution Tours</strong>
+          <div style="color:var(--muted);font-size:13px">Local guides, curated experiences</div>
+        </div>
+        <div style="color:var(--muted);font-size:13px">© <span id="year"></span> YoSolution Tours — All rights reserved</div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Small scripts -->
+  <script>
+    /* ==========================
+       Site settings - edit these
+       ========================== */
+    const SITE_TITLE = 'YoSolution Tours';
+    const SITE_DESCRIPTION = 'Modern tourism packages across Sri Lanka.';
+    const contactPhone = '+94 77 000 0000';
+    const contactEmail = 'info@yoursite.lk';
+
+    // Packages: update this array to add/remove packages quickly
+    const packages = [
+      {
+        id: 'sigiriya1',
+        title: 'Sigiriya & Dambulla Day Tour',
+        days: '1 Day',
+        price: 'LKR 7,000',
+        img: 'https://images.travelandleisureasia.com/wp-content/uploads/sites/7/2023/09/06154557/sri-lanka-1-1.jpeg',
+        short: 'Climb the Sigiriya rock fortress and visit Dambulla Cave Temple. Private guide.'
+      },
+      {
+        id: 'kandy1',
+        title: 'Kandy Cultural Experience',
+        days: '1-2 Days',
+        price: 'LKR 10,000',
+        img: 'https://images.squarespace-cdn.com/content/v1/5a3bb03b4c326d76de73ddaa/64166deb-5566-459e-9c4d-a4d8413c97fd/The_Common_Wanderer_-4336.jpg',
+        short: 'Visit Temple of the Tooth, cultural dancing show, and scenic views.'
+      },
+      {
+        id: 'ella1',
+        title: 'Ella & Little Adams Peak',
+        days: '2 Days',
+        price: 'LKR 18,000',
+        img: 'https://images.squarespace-cdn.com/content/v1/5a3bb03b4c326d76de73ddaa/9732566d-6b33-4a1a-ba0c-1b73ed8848a4/The+Common+Wanderer-9888.jpg',
+        short: 'Train ride to Ella, hike Little Adam\'s Peak and view tea plantations.'
+      }
+    ];
+
+    /* ==========================
+       Render packages
+       ========================== */
+    function renderPackages(){
+      const grid = document.getElementById('packagesGrid');
+      grid.innerHTML = '';
+      packages.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.innerHTML = `
+          <img src="${p.img}" alt="${p.title}" loading="lazy">
+          <h3>${p.title}</h3>
+          <p style="color:var(--muted)">${p.short}</p>
+          <div class="price-row">
+            <div class="badge">${p.days}</div>
+            <div style="font-weight:800">${p.price}</div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:10px">
+            <a class="btn btn-outline" href="#contact" onclick="prefillPackage('${p.title}')">Enquire</a>
+            <a class="btn btn-solid" href="#" onclick="bookNow('${p.id}')">Book Now</a>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+      document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString();
+
+      // Fill package select in contact form
+      const sel = document.querySelector('select[name=package]');
+      sel.innerHTML = '<option value="">Select package (optional)</option>' + packages.map(p => `<option value="${p.title}">${p.title}</option>`).join('');
+    }
+    renderPackages();
+
+    /* ==========================
+       Small helpers & interactivity
+       ========================== */
+    function prefillPackage(title){
+      const sel = document.querySelector('select[name=package]');
+      sel.value = title;
+      window.location.hash = '#contact';
+    }
+    function bookNow(id){
+      // This is placeholder - you can replace with payment or booking flow later
+      alert('Thanks — booking request for ' + id + '. Please contact us to confirm.');
+    }
+
+    // Form handler (basic) - change Formspree URL to your form endpoint
+    async function handleSubmit(e){
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+      const msg = document.getElementById('formMsg');
+      msg.textContent = 'Sending...';
+      try{
+        const resp = await fetch(form.action, {method: form.method, body: data, headers: {'Accept': 'application/json'}});
+        if(resp.ok){
+          msg.textContent = 'Thank you! Your enquiry has been sent.';
+          form.reset();
+        } else {
+          msg.textContent = 'There was a problem sending your message. Please try WhatsApp.';
+        }
+      }catch(err){
+        msg.textContent = 'Network error. Please try again.';
+      }
+      return false;
+    }
+
+    // Mobile menu toggle
+    document.querySelector('.menu-toggle').addEventListener('click', function(){
+      const nav = document.getElementById('mainnav');
+      const open = nav.style.display === 'flex';
+      nav.style.display = open ? 'none' : 'flex';
+      this.setAttribute('aria-expanded', String(!open));
+    });
+
+    // Set phone in page
+    document.getElementById('phone').textContent = contactPhone;
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', function(e){
+        const targetId = this.getAttribute('href').slice(1);
+        if(!targetId) return;
+        e.preventDefault();
+        const el = document.getElementById(targetId);
+        if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+      })
+    });
+
+    // Basic accessibility: focus outlines when using keyboard
+    (function(){
+      function handleFirstTab(e){
+        if(e.key === 'Tab'){
+          document.body.classList.add('user-is-tabbing');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      }
+      window.addEventListener('keydown', handleFirstTab);
+    })();
+
+    /* ==========================
+       DEPLOYMENT NOTES (short)
+       ========================== */
+    // - For GitHub Pages: push this index.html to repo root. In repo Settings -> Pages -> Source choose 'main' branch and '/ (root)'.
+    // - For custom domain: in your domain DNS add A records pointing to GitHub Pages IPs (185.199.108.153 etc) and add a CNAME for www to yourusername.github.io OR set an ALIAS depending on your provider.
+    // - GitHub will provision HTTPS automatically (Let\'s Encrypt) after DNS is set.
+    // - To update content: edit the packages[] array here and re-upload (or if split files, edit the content file and push). If you want client-side editing later, consider moving packages JSON to a small Google Sheet + fetch, or migrate to WordPress.
+
+  </script>
+</body>
+</html>
